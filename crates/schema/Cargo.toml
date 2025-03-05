@@ -1,0 +1,32 @@
+[package]
+name = "axiston-db-schema"
+version = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+publish = { workspace = true }
+readme = "./README.md"
+
+authors = { workspace = true }
+repository = { workspace = true }
+homepage = { workspace = true }
+documentation = { workspace = true }
+include = ["*.rs", "**/*.rs", "migrations"]
+description = "Generated database schema for the Axiston application."
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+[lib]
+path = "./lib.rs"
+
+[features]
+default = ["serde"]
+serde = ["dep:serde"]
+
+[dependencies]
+diesel = { workspace = true }
+diesel_migrations = { workspace = true }
+diesel-derive-enum = { workspace = true }
+strum = { workspace = true }
+serde = { workspace = true, optional = true }

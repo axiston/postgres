@@ -1,0 +1,48 @@
+# https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[workspace]
+resolver = "2"
+members = [
+    "./crates/client",
+    "./crates/schema",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+publish = false
+
+authors = ["Axiston <contact@axiston.com>"]
+repository = "https://github.com/axiston/axiston"
+homepage = "https://github.com/axiston/axiston"
+documentation = "https://docs.rs/axiston"
+
+[workspace.dependencies]
+axiston-db-client = { path = "./crates/client", version = "0.1.0" }
+axiston-db-schema = { path = "./crates/schema", version = "0.1.0" }
+
+tokio = { version = "1.42", features = ["rt-multi-thread", "macros", "signal"] }
+deadpool = { version = "0.12", features = ["managed", "rt_tokio_1"] }
+futures = { version = "0.3", features = [] }
+thiserror = { version = "2.0", features = [] }
+tracing = { version = "0.1", features = [] }
+
+diesel = { version = "2.2", features = ["postgres", "time", "uuid", "ipnet-address", "serde_json"] }
+diesel_migrations = { version = "2.2", features = ["postgres"] }
+diesel-async = { version = "0.5", features = ["postgres", "pool", "deadpool", "async-connection-wrapper"] }
+diesel-derive-enum = { version = "2.1", features = ["postgres"] }
+
+derive_more = { version = "2.0", features = ["full"] }
+strum = { version = "0.27", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_with = { version = "3.11", features = [] }
+serde_json = { version = "1.0", features = [] }
+
+argon2 = { version = "0.5", features = ["std"] }
+bytes = { version = "1.9", features = ["serde"] }
+uuid = { version = "1.11", features = ["v4", "serde"] }
+time = { version = "0.3", features = ["serde", "formatting", "parsing"] }
+base64 = { version = "0.22", features = [] }
+ecow = { version = "0.2", features = ["serde"] }
+ipnet = { version = "2.10", features = ["serde"] }

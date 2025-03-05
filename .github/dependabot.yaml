@@ -1,0 +1,18 @@
+version: 2
+updates:
+
+    -   package-ecosystem: "docker"
+        directory: "/"
+        schedule:
+            interval: "weekly"
+            timezone: "Europe/Warsaw"
+            day: "friday"
+            time: "18:00"
+
+    -   package-ecosystem: "cargo"
+        directory: "/"
+        schedule:
+            interval: "weekly"
+            timezone: "Europe/Warsaw"
+            day: "friday"
+            time: "18:00"

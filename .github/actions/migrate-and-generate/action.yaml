@@ -1,0 +1,58 @@
+name: "Migrate and Generate"
+description: "Runs migrations and generates code."
+author: "Oleh Martsokha"
+
+inputs:
+    host:
+        description: "The PostgreSQL host to connect to"
+        required: false
+        default: "localhost"
+    port:
+        description: "The PostgreSQL port to connect to"
+        required: false
+        default: "5432"
+    username:
+        description: "The PostgreSQL username to authenticate with"
+        required: false
+        default: "postgres"
+    password:
+        description: "The PostgreSQL password to authenticate with"
+        required: false
+        default: "postgres"
+    database:
+        description: "PostgreSQL database name"
+        required: false
+        default: "postgres"
+
+runs:
+    using: "composite"
+    steps:
+        -   name: Run make:install
+            env:
+                POSTGRES_HOST: ${{ inputs.host }}
+                POSTGRES_PORT: ${{ inputs.port }}
+                POSTGRES_USERNAME: ${{ inputs.username }}
+                POSTGRES_PASSWORD: ${{ inputs.password }}
+                POSTGRES_DATABASE: ${{ inputs.database }}
+            shell: bash
+            run: make install
+
+        -   name: Run make:migrate
+            env:
+                POSTGRES_HOST: ${{ inputs.host }}
+                POSTGRES_PORT: ${{ inputs.port }}
+                POSTGRES_USERNAME: ${{ inputs.username }}
+                POSTGRES_PASSWORD: ${{ inputs.password }}
+                POSTGRES_DATABASE: ${{ inputs.database }}
+            shell: bash
+            run: make migrate
+
+        -   name: Run make:generate
+            env:
+                POSTGRES_HOST: ${{ inputs.host }}
+                POSTGRES_PORT: ${{ inputs.port }}
+                POSTGRES_USERNAME: ${{ inputs.username }}
+                POSTGRES_PASSWORD: ${{ inputs.password }}
+                POSTGRES_DATABASE: ${{ inputs.database }}
+            shell: bash
+            run: make generate
