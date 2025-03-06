@@ -1,0 +1,118 @@
+name: CI & CD
+
+on:
+    push:
+        branches:
+            - "main"
+        tags:
+            - "v*.*.*"
+    pull_request:
+    workflow_dispatch:
+
+jobs:
+    shell:
+        runs-on: ubuntu-22.04
+        steps:
+            -   name: Checkout repository
+                uses: actions/checkout@v4
+
+            -   name: Run Shellcheck
+                uses: ludeeus/action-shellcheck@master
+
+    build:
+        runs-on: ubuntu-22.04
+        steps:
+            -   name: Checkout repository
+                uses: actions/checkout@v4
+
+            -   name: Install Rust toolchain
+                uses: dtolnay/rust-toolchain@master
+                with:
+                    components: clippy,rustfmt
+                    toolchain: nightly
+
+            -   name: Set up Rust cache
+                uses: Swatinem/rust-cache@v2
+
+            -   name: Install & Run Postgres
+                uses: ikalnytskyi/action-setup-postgres@v7
+                with:
+                    username: "postgres"
+                    password: "postgres"
+                    database: "postgres"
+
+            -   name: Wait for Postgres
+                uses: ./.github/actions/wait-for-postgres
+                with:
+                    username: "postgres"
+                    timeout: "30"
+
+            -   name: Run migrations on Postgres
+                uses: ./.github/actions/migrate-and-generate
+                with:
+                    username: "postgres"
+                    password: "postgres"
+                    database: "postgres"
+
+            -   name: Run Cargo:fmt
+                run: cargo +nightly fmt --all -- --check
+
+            -   name: Run Cargo:clippy
+                run: cargo clippy --workspace --all-features -- -D warnings
+
+            -   name: Run Cargo:test
+                run: cargo test --workspace --verbose --all-features
+
+    publish:
+        needs: build
+        runs-on: ubuntu-22.04
+        if: github.event_name == 'push'
+        steps:
+            -   name: Checkout repository
+                uses: actions/checkout@v4
+
+            -   name: Set up Rust
+                uses: dtolnay/rust-toolchain@master
+                with:
+                    toolchain: nightly
+
+            -   name: Set up Rust cache
+                uses: Swatinem/rust-cache@v2
+                with:
+                    save-if: "false"
+
+            -   name: Install & Run Postgres
+                uses: ikalnytskyi/action-setup-postgres@v7
+                with:
+                    username: "postgres"
+                    password: "postgres"
+                    database: "postgres"
+
+            -   name: Wait for Postgres
+                uses: ./.github/actions/wait-for-postgres
+                with:
+                    username: "postgres"
+                    timeout: "30"
+
+            -   name: Run migrations on Postgres
+                uses: ./.github/actions/migrate-and-generate
+                with:
+                    username: "postgres"
+                    password: "postgres"
+                    database: "postgres"
+
+            -   name: Publish ./crates/schema to crates.io
+                run: |
+                    cd ./crates/schema
+                    cargo publish --token ${CRATES_TOKEN} --allow-dirty
+                    cd -
+                env:
+                    CRATES_TOKEN: ${{ secrets.CRATES_TOKEN }}
+
+            -   name: Publish ./crates/client to crates.io
+                run: |
+                    cd ./crates/client
+                    cargo publish --token ${CRATES_TOKEN} --allow-dirty
+                    cd -
+                env:
+                    CRATES_TOKEN: ${{ secrets.CRATES_TOKEN }}

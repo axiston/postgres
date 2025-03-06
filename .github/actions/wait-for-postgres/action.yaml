@@ -1,0 +1,35 @@
+name: "Wait for Postgres"
+description: "Waits for the PostgreSQL service to be ready."
+author: "Oleh Martsokha"
+
+inputs:
+    host:
+        description: "The database host to connect to"
+        required: false
+        default: "localhost"
+    port:
+        description: "The database port to connect to"
+        required: false
+        default: "5432"
+    username:
+        description: "The database username to authenticate with"
+        required: false
+        default: "postgres"
+    timeout:
+        description: "Timeout in seconds to wait for"
+        required: false
+        default: "30"
+
+runs:
+    using: "composite"
+    steps:
+        -   name: "Check if Postgres is ready"
+            env:
+                POSTGRES_HOST: ${{ inputs.host }}
+                POSTGRES_PORT: ${{ inputs.port }}
+                POSTGRES_USER: ${{ inputs.username }}
+                POSTGRES_TIMEOUT: ${{ inputs.timeout }}
+            shell: bash
+            run: |
+                chmod +x .github/actions/wait-for-postgres/script.sh
+                .github/actions/wait-for-postgres/script.sh

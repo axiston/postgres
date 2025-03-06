@@ -16,7 +16,8 @@ Cargo.lock
 **/*.rs.bk
 *.pdb
 
-# Generated
-/crates/schema/schema.rs
-/crates/schema/migrations
-deno.jsonc
+# Other
+.github/
+crates/
+migrations/
+scripts/
