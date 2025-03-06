@@ -10,8 +10,8 @@ POSTGRES_DATABASE ?= postgres
 
 # Directories and files:
 SCHEMA_OUTPUT = ./crates/schema/schema.rs
-MIGRATIONS_DIR = ./migrations
-MIGRATIONS_DEST = ./crates/schema/migrations
+MIGRATIONS_SOURCE_DIR = ./migrations
+MIGRATIONS_TARGET_DIR = ./crates/schema/migrations
 
 # Construct database address using environment variables.
 DATABASE_URL = postgresql://$(POSTGRES_USERNAME):$(POSTGRES_PASSWORD)@${POSTGRES_HOST}:${POSTGRES_PORT}/$(POSTGRES_DATABASE)
@@ -27,9 +27,9 @@ install: ## Installs the Diesel CLI.
 .PHONY: migrate
 migrate: ## Runs all Postgres migrations.
 	$(call print-info, "Ensuring migrations directory exists...")
-	mkdir -p $(MIGRATIONS_DEST)
-	$(call print-info, "Copying migrations to $(MIGRATIONS_DEST)...")
-	cp -r $(MIGRATIONS_DIR)/* $(MIGRATIONS_DEST)
+	mkdir -p $(MIGRATIONS_TARGET_DIR)
+	$(call print-info, "Copying migrations to $(MIGRATIONS_TARGET_DIR)...")
+	cp -r $(MIGRATIONS_SOURCE_DIR)/* $(MIGRATIONS_TARGET_DIR)
 	$(call print-success, "Migrations copied successfully.")
 	$(call print-info, "Running migrations...")
 	DATABASE_URL=$(DATABASE_URL) diesel migration run
@@ -47,7 +47,7 @@ clean: ## Deletes the output schema file and copied migrations directory.
 	rm -f $(SCHEMA_OUTPUT)
 	$(call print-success, "Schema file deleted.")
 	$(call print-info, "Deleting migrations directory...")
-	rm -rf $(MIGRATIONS_DEST)
+	rm -rf $(MIGRATIONS_TARGET_DIR)
 	$(call print-success, "Migrations directory deleted.")
 
 .PHONY: generate

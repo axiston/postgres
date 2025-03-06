@@ -24,8 +24,7 @@ use diesel_async::pooled_connection::PoolError as PoolError2;
 pub use crate::config::{Database, DatabaseConfig};
 pub use crate::migrate::DatabaseExt;
 pub use crate::query::*;
-pub use crate::utils::serde;
-// use crate::utils::dsl;
+// pub use crate::utils::{dsl, serde};
 
 mod config;
 mod migrate;

@@ -18,8 +18,8 @@ Contains the database schema for the application, generated using
 
 The schema is updated automatically after all migrations are applied during a
 GitHub Action triggered by a pull request to the `main` branch. For instructions
-on how to regenerate the schema locally, refer to the `Makefile` and `build.rs`
-files in the project root.
+on how to regenerate the schema locally, refer to the `Makefile` in the project
+root and `build.rs` files.
 
 [diesel_cli]: https://crates.io/crates/diesel_cli
 
